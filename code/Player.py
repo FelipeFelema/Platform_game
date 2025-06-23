@@ -14,11 +14,13 @@ def carregar_sprite_sheet(caminho, largura_frame, altura_frame):
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, x, y, grupo_efeitos, largura_tela):
+    def __init__(self, x, y, grupo_efeitos, largura_tela, grupo_plataformas, comprimento_fase):
         super().__init__()
         self.grupo_efeitos = grupo_efeitos
         self.velocidade = 5
         self.largura_tela = largura_tela
+        self.grupo_plataformas = grupo_plataformas
+        self.comprimento_fase = comprimento_fase
 
         self.animacoes = {
             "idle": carregar_sprite_sheet("assets/images/player/idle/idle.png", 128, 128),
@@ -37,31 +39,27 @@ class Player(pygame.sprite.Sprite):
         self.flip = False
         self.contador_animacao = 0
 
+        # Cooldown do ataque
+        self.tempo_ultimo_ataque = 0
+        self.cooldown_ataque = 300  # milissegundos
+
     def atualizar_estado(self, teclas):
         estado_anterior = self.estado
 
-
-        # Se estiver atacando, não deixa trocar de estado até a animação acabar
         if self.estado == "attack":
-            return
+            return  # mantém ataque até terminar a animação
 
-        # Detecta o ataque
-        if teclas[pygame.K_z]:
+        agora = pygame.time.get_ticks()
+
+        # Detecta ataque com cooldown
+        if teclas[pygame.K_z] and agora - self.tempo_ultimo_ataque > self.cooldown_ataque:
+            self.tempo_ultimo_ataque = agora
             self.estado = "attack"
 
             largura_efeito = 80
             altura_efeito = 80
             offset_x = -50
             offset_y = -10
-
-            if self.flip:
-                # Se estiver virado para a esquerda, ataque parte da esquerda da mão
-                x_efeito = self.rect.left - (largura_efeito // 2)
-            else :
-                # Se estiver virado para a direita, ataque parte da direita da mão
-                x_efeito = self.rect.right - (largura_efeito // 2)
-
-            y_efeito = self.rect.centery - (altura_efeito // 2) + offset_y
 
             efeito = EfeitoVisual(self, "assets/images/effects/slash", offset_x, offset_y)
             self.grupo_efeitos.add(efeito)
@@ -73,7 +71,6 @@ class Player(pygame.sprite.Sprite):
         else:
             self.estado = "idle"
 
-        # Se o estado mudou, reseta a animação
         if self.estado != estado_anterior:
             self.frame_index = 0
             self.contador_animacao = 0
@@ -81,7 +78,15 @@ class Player(pygame.sprite.Sprite):
     def update(self, teclas):
         deslocamento_camera = 0
 
-        self.atualizar_estado(teclas)  # ← processa estados e ataques
+        # Colisão com plataformas
+        for plataforma in self.grupo_plataformas:
+            if self.rect.colliderect(plataforma.rect):
+                if self.vel_y > 0:  # caiu de cima
+                    self.rect.bottom = plataforma.rect.top
+                    self.vel_y = 0
+                    self.no_chao = True
+
+        self.atualizar_estado(teclas)
 
         if teclas[pygame.K_LEFT]:
             if self.rect.x > self.largura_tela // 3:
@@ -118,12 +123,12 @@ class Player(pygame.sprite.Sprite):
 
     def animar(self):
         animacao = self.animacoes[self.estado]
-        self.frame_index += 0.2  # pode ajustar a velocidade depois
+        self.frame_index += 0.2  # pode ajustar a velocidade
 
         if self.frame_index >= len(animacao):
             self.frame_index = 0
             if self.estado == "attack":
-                self.estado = "idle"  # volta para idle depois do ataque
+                self.estado = "idle"  # volta para idle após ataque
 
         self.image = animacao[int(self.frame_index)]
 
@@ -132,4 +137,5 @@ class Player(pygame.sprite.Sprite):
 
         self.rect = self.image.get_rect(midbottom=self.rect.midbottom)
 
-
+    def get_posicao_mundo(self, camera_x):
+        return self.rect.x + camera_x
