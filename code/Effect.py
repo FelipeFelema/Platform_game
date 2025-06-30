@@ -5,42 +5,52 @@ import os
 class EfeitoVisual(pygame.sprite.Sprite):
     def __init__(self, dono, pasta_frames, offset_x, offset_y):
         super().__init__()
-        self.dono = dono # referência ao personagem
+        self.dono = dono  # referência ao personagem
         self.offset_x = offset_x
         self.offset_y = offset_y
 
-        self.frames = []
+        self.original_frames = []  # Lista para armazenar os frames na orientação padrão (sem flip)
         for nome_arquivo in sorted(os.listdir(pasta_frames), key=lambda n: int(n.split(".")[0])):
             caminho = os.path.join(pasta_frames, nome_arquivo)
             imagem = pygame.image.load(caminho).convert_alpha()
-            imagem = pygame.transform.scale(imagem,(80, 80))
-            if self.dono.flip:
-                imagem = pygame.transform.flip(imagem, True, False)
-            self.frames.append(imagem)
+            imagem = pygame.transform.scale(imagem, (80, 80))  # Redimensiona o frame
+            self.original_frames.append(imagem)  # Adiciona o frame original
 
         self.frame_index = 0
-        self.image = self.frames[self.frame_index]
+        self.image = self.original_frames[self.frame_index]  # Começa com o primeiro frame original
         self.rect = self.image.get_rect()
-        self.update_posicao()
+        self.update_imagem_e_posicao()  # Chama o novo método para atualizar a imagem (com flip) e a posição
         self.contador_frames = 0
 
     def update(self):
-       self.contador_frames += 1
-       if self.contador_frames >= 6:    # Velocidade da animação
-           self.frame_index += 1
-           self.contador_frames = 0
+        self.contador_frames += 1
+        if self.contador_frames >= 6:  # Velocidade da animação (ajuste conforme a fluidez desejada)
+            self.frame_index += 1
+            self.contador_frames = 0
 
-           if self.frame_index < len(self.frames):
-                self.image = self.frames[self.frame_index]
-           else:
-                self.kill()     # Fim da animação
+            if self.frame_index < len(self.original_frames):
+                # A imagem será atualizada no método update_imagem_e_posicao
+                pass
+            else:
+                self.kill()  # Fim da animação, remove o sprite
 
-       self.update_posicao()    # Atualiza a posição a cada frame
+        self.update_imagem_e_posicao()  # Atualiza a posição E aplica o flip à imagem a cada frame
 
-    def update_posicao(self):
-        base_y = self.dono.rect.bottom - self.dono.rect.height // 3  # base na altura do tórax/mão
+    # NOVO MÉTODO: Atualiza a imagem do efeito (com flip) e sua posição
+    def update_imagem_e_posicao(self):
+        # Primeiro, atualiza a imagem baseada no frame_index
+        if self.frame_index < len(self.original_frames):  # Garante que o índice é válido
+            self.image = self.original_frames[self.frame_index]
+            # Agora, aplica o flip à imagem se o dono estiver virado
+            if self.dono.flip:
+                self.image = pygame.transform.flip(self.image, True, False)
 
-        if self.dono.flip:
-            self.rect.midright = (self.dono.rect.left - self.offset_x, base_y + self.offset_y)
-        else:
-            self.rect.midleft = (self.dono.rect.right + self.offset_x, base_y + self.offset_y)
+        # Em seguida, atualiza a posição do rect do efeito
+        base_y = self.dono.rect.centery  # Pega o centro Y da hitbox do player
+
+        if self.dono.flip:  # Se o player está virado para a esquerda
+            # O efeito é anexado ao lado esquerdo da hitbox do player, e offset_x é adicionado
+            self.rect.topleft = (self.dono.rect.left + self.offset_x, base_y + self.offset_y)
+        else:  # Se o player está virado para a direita
+            # O efeito é anexado ao lado direito da hitbox do player, e offset_x é adicionado
+            self.rect.topleft = (self.dono.rect.right + self.offset_x, base_y + self.offset_y)
