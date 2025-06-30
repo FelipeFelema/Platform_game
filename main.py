@@ -28,7 +28,7 @@ def mostrar_tela_fim(tela, largura, altura):
 
 
 def iniciar_jogo():
-    comprimento_fase = 4000
+    comprimento_fase = 2500
     camera_x = 0  # Posição atual da câmera no mundo
     camera_x_anterior = 0  # Nova variável para calcular o deslocamento para o parallax
 
@@ -65,15 +65,51 @@ def iniciar_jogo():
     plataforma_chao = TilePlataforma(0, y_chao_hitbox, matriz_chao, tile_dir, offset_visual_do_chao)
     grupo_plataformas.add(plataforma_chao)
 
-    # Exemplo: Parede vertical 6 tiles de altura no x=800
-    parede1_altura_tiles = 6
-    parede1 = ParedeVertical(800, y_chao_hitbox - (parede1_altura_tiles * tile_size), parede1_altura_tiles, tile_dir)
+    # Exemplo: Parede vertical1 12 tiles de altura no x=1500
+    parede1_altura_tiles = 12
+    parede1 = ParedeVertical(1500, y_chao_hitbox - (parede1_altura_tiles * tile_size), parede1_altura_tiles, tile_dir)
     grupo_plataformas.add(parede1)
 
-    # Exemplo: Plataforma horizontal 6 tiles no x=500, 3 tiles acima do chão
-    plataforma1_y = y_chao_hitbox - 3 * tile_size
-    plataforma1 = PlataformaHorizontal(500, plataforma1_y, 6, tile_dir)
+    # Exemplo: Parede vertical2 12 tiles de altura no x=2000
+    parede2_altura_tiles = 12
+    parede2 = ParedeVertical(2000, y_chao_hitbox - (parede2_altura_tiles * tile_size), parede2_altura_tiles, tile_dir)
+    grupo_plataformas.add(parede2)
+
+    # Exemplo: Parede vertical2 12 tiles de altura no x=2200
+    parede3_altura_tiles = 12
+    parede3 = ParedeVertical(2200, y_chao_hitbox -100 - (parede3_altura_tiles * tile_size), parede3_altura_tiles, tile_dir)
+    grupo_plataformas.add(parede3)
+
+
+    # Exemplo: Plataforma horizontal 6 tiles no x=400, 5 tiles acima do chão
+    plataforma1_y = y_chao_hitbox - 5 * tile_size
+    plataforma1 = PlataformaHorizontal(400, plataforma1_y, 6, tile_dir)
     grupo_plataformas.add(plataforma1)
+
+    # Exemplo: Plataforma horizontal2 5 tiles no x=1042, 7 tiles acima do chão
+    plataforma2_y = y_chao_hitbox - 7 * tile_size
+    plataforma2 = PlataformaHorizontal(1042, plataforma2_y, 5, tile_dir)
+    grupo_plataformas.add(plataforma2)
+
+    # Exemplo: Plataforma horizontal4 5 tiles no x=1342, 4 tiles acima do chão
+    plataforma3_y = y_chao_hitbox - 4 * tile_size
+    plataforma3 = PlataformaHorizontal(1342, plataforma3_y, 5, tile_dir)
+    grupo_plataformas.add(plataforma3)
+
+    # Exemplo: Plataforma horizontal4 5 tiles no x=1342, 12 tiles acima do chão
+    plataforma4_y = y_chao_hitbox - 12 * tile_size
+    plataforma4 = PlataformaHorizontal(1342, plataforma4_y, 5, tile_dir)
+    grupo_plataformas.add(plataforma4)
+
+    # Exemplo: Plataforma horizontal5 4 tiles no x=1800, 5 tiles acima do chão
+    plataforma5_y = y_chao_hitbox - 5 * tile_size
+    plataforma5 = PlataformaHorizontal(1650, plataforma5_y, 4, tile_dir)
+    grupo_plataformas.add(plataforma5)
+
+    # Exemplo: Plataforma horizontal6 4 tiles no x=1950, 10 tiles acima do chão
+    plataforma6_y = y_chao_hitbox - 10 * tile_size
+    plataforma6 = PlataformaHorizontal(1800, plataforma6_y, 4, tile_dir)
+    grupo_plataformas.add(plataforma6)
 
     # Posição vertical do player: com os pés na grama (topo da hitbox do chão)
     altura_player_hitbox = 90

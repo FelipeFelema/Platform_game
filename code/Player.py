@@ -53,7 +53,7 @@ class Player(pygame.sprite.Sprite):
         # Ajustes para pulo e gravidade
         self.vel_y = 0
         self.gravidade = 1.0  # Gravidade por frame. Ajuste se o pulo estiver muito rápido.
-        self.forca_pulo = -22  # Força inicial do pulo. Experimente -25 ou -30 se precisar pular mais alto.
+        self.forca_pulo = -20  # Força inicial do pulo. Experimente -25 ou -30 se precisar pular mais alto.
 
         self.no_chao = False
         self.flip = False
