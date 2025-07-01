@@ -180,7 +180,8 @@ def iniciar_jogo():
 
         player.draw(tela, camera_x)
 
-        grupo_efeitos.draw(tela)
+        for efeito in grupo_efeitos:
+            efeito.draw(tela, camera_x)
 
         for sprite_fim in grupo_fim:
             sprite_fim.desenhar(tela, camera_x)

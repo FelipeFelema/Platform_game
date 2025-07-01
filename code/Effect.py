@@ -22,6 +22,12 @@ class EfeitoVisual(pygame.sprite.Sprite):
         self.update_imagem_e_posicao()  # Chama o novo método para atualizar a imagem (com flip) e a posição
         self.contador_frames = 0
 
+        # --- NOVOS ATRIBUTOS PARA A HITBOX DE ATAQUE ---
+        self.dano = 10  # Dano que este ataque causa
+        self.hitbox_ativa = False # Booleano para controlar quando a hitbox está ativa
+        self.frame_para_ativar_hitbox = 2 # Exemplo: Ativar a hitbox no 3º frame (índice 2)
+        self.hitbox_ja_aplicou_dano = False # Evita que o mesmo ataque dê dano múltiplas vezes
+
     def update(self):
         self.contador_frames += 1
         if self.contador_frames >= 6:  # Velocidade da animação (ajuste conforme a fluidez desejada)
@@ -30,7 +36,12 @@ class EfeitoVisual(pygame.sprite.Sprite):
 
             if self.frame_index < len(self.original_frames):
                 # A imagem será atualizada no método update_imagem_e_posicao
-                pass
+
+                # --- LÓGICA PARA ATIVAR A HITBOX ---
+                if self.frame_index == self.frame_para_ativar_hitbox:
+                    self.hitbox_ativa = True
+                else:
+                    self.hitbox_ativa = False # Desativa após o frame ativo, ou mantém desativada antes
             else:
                 self.kill()  # Fim da animação, remove o sprite
 
@@ -40,7 +51,7 @@ class EfeitoVisual(pygame.sprite.Sprite):
     def update_imagem_e_posicao(self):
         # Primeiro, atualiza a imagem baseada no frame_index
         if self.frame_index < len(self.original_frames):  # Garante que o índice é válido
-            self.image = self.original_frames[self.frame_index]
+            self.image = self.original_frames[int(self.frame_index)] # Usar int() para o índice
             # Agora, aplica o flip à imagem se o dono estiver virado
             if self.dono.flip:
                 self.image = pygame.transform.flip(self.image, True, False)
@@ -54,3 +65,13 @@ class EfeitoVisual(pygame.sprite.Sprite):
         else:  # Se o player está virado para a direita
             # O efeito é anexado ao lado direito da hitbox do player, e offset_x é adicionado
             self.rect.topleft = (self.dono.rect.right + self.offset_x, base_y + self.offset_y)
+
+    def draw(self, screen, camera_x):
+        # Desenha a imagem visual do efeito
+        screen_x = self.rect.x - camera_x
+        screen_y = self.rect.y
+        screen.blit(self.image, (screen_x, screen_y))
+
+        # Opcional: Desenhar a hitbox do ataque para depuração
+        if self.hitbox_ativa:
+            pygame.draw.rect(screen, (255, 0, 255), (screen_x, screen_y, self.rect.width, self.rect.height), 2)
