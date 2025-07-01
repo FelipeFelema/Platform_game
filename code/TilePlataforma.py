@@ -2,19 +2,17 @@ import pygame
 import os
 
 class TilePlataforma(pygame.sprite.Sprite):
-    # Adicionamos 'visual_offset_y' como um novo parâmetro com valor padrão 0
     def __init__(self, x, y, matriz_tiles, pasta_tiles, visual_offset_y=0):
         super().__init__()
         self.x = x
-        # Este 'y' agora representará a coordenada Y do TOPO da HITBOX (a linha vermelha)
-        self.y = y
+        self.y = y  # Coordenada Y do topo da hitbox
         self.matriz_tiles = matriz_tiles
         self.pasta = pasta_tiles
         self.tamanho_tile = 32
-        # Armazenamos o offset para ser usado na hora de desenhar
-        self.visual_offset_y = visual_offset_y
+        self.visual_offset_y = visual_offset_y # Offset para ajustar a posição visual dos tiles
 
         self.tiles = {}
+        # Carrega e escala todas as imagens de tiles necessárias
         for linha in matriz_tiles:
             for nome in linha:
                 if nome not in self.tiles:
@@ -27,22 +25,19 @@ class TilePlataforma(pygame.sprite.Sprite):
         self.linhas = len(matriz_tiles)
         self.colunas = len(matriz_tiles[0])
         self.largura = self.colunas * self.tamanho_tile
-        self.altura = self.linhas * self.tamanho_tile
+        self.altura = self.linhas * self.tamanho_tile # Altura total da hitbox
 
-        # A hitbox agora é criada diretamente no 'y' passado (que é o Y da hitbox)
+        # Define a hitbox da plataforma
         self.rect = pygame.Rect(self.x, self.y, self.largura, self.altura)
 
     def update(self):
-        pass
+        pass # Não há lógica de atualização contínua para plataformas estáticas
 
     def draw(self, tela, camera_x):
-        # AQUI É A MUDANÇA: O chão principal NÃO deve ter parallax.
-        # Ele deve se mover 1:1 com a câmera para permanecer "fixo" no mundo.
-        # Removido o 'int(camera_x * parallax_factor)' e substituído por 'camera_x' diretamente.
+        # Desenha os tiles da plataforma, movendo-se com a câmera
         for i, linha in enumerate(self.matriz_tiles):
             for j, nome_tile in enumerate(linha):
                 tile = self.tiles[nome_tile]
-                x_tela = self.x + j * self.tamanho_tile - camera_x # CORREÇÃO AQUI!
-                # Adicionamos o offset visual aqui. Como queremos mover o visual PARA CIMA, o offset será NEGATIVO.
-                y_tela = self.y + i * self.tamanho_tile + self.visual_offset_y
+                x_tela = self.x + j * self.tamanho_tile - camera_x
+                y_tela = self.y + i * self.tamanho_tile + self.visual_offset_y # Aplica o offset visual
                 tela.blit(tile, (x_tela, y_tela))
