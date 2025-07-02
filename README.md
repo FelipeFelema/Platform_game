@@ -1,6 +1,10 @@
 # Platform_game
 Creating a  simple 2d  platform game
 
+***Run***
+
+To run the game just run the main.py
+
 ***Assets***
 
 Images and Sprites from ***https://craftpix.net/***
