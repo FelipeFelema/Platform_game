@@ -54,6 +54,10 @@ def mostrar_controles(tela, largura, altura):
 
 def menu(tela, largura, altura):
     """Exibe o menu principal do jogo."""
+    pygame.mixer.music.load("assets/music/menu/menu_music.mp3")         # carrega a música do menu
+    pygame.mixer.music.play(-1)         # toca a música em loop
+    pygame.mixer.music.set_volume(0.3)      # define o volume para 30%
+
     fonte = pygame.font.Font(None, 60)
     opcoes = ['Começar', 'Controles', 'Sair']
     selecionado = 0

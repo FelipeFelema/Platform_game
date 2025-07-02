@@ -9,6 +9,7 @@ from code.PlataformasCustom import ParedeVertical, PlataformaHorizontal
 from code.Enemy import Enemy
 
 pygame.init()
+pygame.mixer.init()
 largura = 800
 altura = 600
 tela = pygame.display.set_mode((largura, altura))
@@ -31,6 +32,10 @@ def mostrar_tela_fim(tela, largura, altura, mensagem="Fase concluída!", cor_tex
 
 
 def iniciar_jogo():
+    pygame.mixer.music.stop()       # Para a música do menu quando o jogo inicia
+    pygame.mixer.music.load("assets/music/background/background_music.mp3")         # carrega a música de fundo
+    pygame.mixer.music.play(-1)         # toca a música em loop
+
     comprimento_fase = 2500
     camera_x = 0
     camera_x_anterior = 0
