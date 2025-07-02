@@ -1,4 +1,4 @@
-# Platform_game
+# Jump n Slash
 Creating a  simple 2d  platform game
 
 ***Run***
